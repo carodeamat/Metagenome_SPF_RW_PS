@@ -25,3 +25,5 @@ grep -oE 'href="[^"]+\.fq\.gz"' urls.html | \
 grep -oE 'href="[^"]+\.fq\.gz\.md5sums"' urls.html | \
   sed -E 's/href="([^"]+)"/\1/' | \
   awk -v base_url=$URLpath '{print base_url $0}' > md5urls.txt
+
+rm urls.html
