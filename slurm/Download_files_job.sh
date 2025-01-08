@@ -76,11 +76,18 @@ else
     # in a pre-existing fqfiles/ directory
     echo "Downloading files provided in '$4'"
 
+    # Create fqfiles directory if it does not exist.
     if [ ! -d "fqfiles" ]; then
       mkdir fqfiles/
     fi
 
+    # change directory to fq files
     cd fqfiles/
+
+    # Delete fq files provided if they already exist
+    xargs -a $4 -I {} bash -c '[ -f "{}" ] && rm {}'
+
+    # Download provided fq files from url in parallel
     cat $4 | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
     wget --auth-no-challenge \
     --user=URLuser \
