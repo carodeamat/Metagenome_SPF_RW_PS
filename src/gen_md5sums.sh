@@ -8,5 +8,9 @@ input_file="$1"
 # Generate the output file name, ending in md5sums.txt
 output_file=$(basename -- ${input_file%.fq.gz}.md5sums.txt)
 
+if [ ! -d "gen_md5sums" ]; then
+  mkdir gen_md5sums/
+fi
+
 # Run the md5sum command and save the output to the corresponding file
-md5sum "$input_file" > "$output_file"
+md5sum "$input_file" > gen_md5sums/"$output_file"
