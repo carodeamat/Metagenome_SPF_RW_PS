@@ -26,7 +26,7 @@ else
   #Fourth argument (optional: for selected files only)
   fqFILES=$4
 
-  # If a file with URLs for fq files is not provided in the 4th argument,
+  # If a file with list of fq files is not provided in the 4th argument,
   # then all the files from the URL provided will be downloaded
   if [ -z "$4" ]; then
     echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
@@ -71,9 +71,9 @@ else
 
   else
 
-    # If the 4th argument with list of URLs is provided,
+    # If the 4th argument with list of fq files is provided,
     # Then only those fq files will be downloaded
-    # in a pre-existing fqfiles/ directory
+    # in the fqfiles/ directory
     echo "Downloading files provided in '$4'"
 
     # Create fqfiles directory if it does not exist.
@@ -86,9 +86,12 @@ else
 
     # Delete fq files provided if they already exist
     xargs -a $4 -I {} bash -c '[ -f "{}" ] && rm {}'
+    # Make URL paths for each fq file provided
+    cat $4 | \
+    awk -v base_url=$URLpath '{print base_url $0}' > fqurls.txt
 
     # Download provided fq files from url in parallel
-    cat $4 | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
+    cat fqurls.txt | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
     wget --auth-no-challenge \
     --user=URLuser \
     --password=URLpw \
@@ -97,6 +100,8 @@ else
     --cut-dirs=4 \
     --continue \
     {}
+
+    rm fqurls.txt
     echo "Indicated fq files were saved in the fqfiles/ directory"
     echo "Number of files in fqfiles/ directory:"
     ls -1 | wc -l
