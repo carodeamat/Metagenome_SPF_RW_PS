@@ -75,7 +75,11 @@ else
     # Then only those fq files will be downloaded
     # in a pre-existing fqfiles/ directory
     echo "Downloading files provided in '$4'"
-    
+
+    if [ ! -d "fqfiles" ]; then
+      mkdir fqfiles/
+    fi
+
     cd fqfiles/
     cat $4 | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
     wget --auth-no-challenge \
