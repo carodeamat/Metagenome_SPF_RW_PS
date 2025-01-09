@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=def-mallev
 #SBATCH --job-name=run_md5sum      # Job name
-#SBATCH --output=md5sum_job.log    # Log file for SLURM output
+#SBATCH --output=%x_%j.out        # Output file for SLURM output
 #SBATCH --time=01:00:00                 # Time limit
-#SBATCH --cpus-per-task=8               # Number of CPUs per task
-#SBATCH --mem=4G                        # Memory per node
+#SBATCH --ntasks-per-node=16               # Number of tasks per node
+#SBATCH --mem=12G                        # Memory per node
 #SBATCH --nodes=1                       # Number of nodes
 
 # Define argument
@@ -15,14 +15,14 @@ FQ_FILES="$1"
 # If a directory is provided as argument
 if [ -d "$FQ_FILES" ]; then
   find $FQ_FILES -name "*.fq.gz" | \
-  parallel -j $SLURM_CPUS_PER_TASK \
+  parallel -j $SLURM_TASKS_PER_NODE \
   --joblog ../log/gen_md5sums_log.log \
   bash src/gen_md5sums.sh {}
 
 # Check if the argument is a text file (.txt extension)
 elif [ -f "$FQ_FILES" ] && [[ "$FQ_FILES" == *.txt ]]; then
   cat $FQ_FILES | \
-  parallel -j $SLURM_CPUS_PER_TASK \
+  parallel -j $SLURM_TASKS_PER_NODE \
   --joblog ../log/gen_md5sums_log.log \
   bash src/gen_md5sums.sh {}
 
