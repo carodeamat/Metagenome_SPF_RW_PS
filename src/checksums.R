@@ -7,17 +7,31 @@
 #load libraries
 library(stringr)
 
-#name of the txt file containing the generated md5
-md5_cluster <- commandArgs(trailingOnly = TRUE) [1]
+# Getting arguments from command line
+args <- commandArgs(trailingOnly = TRUE)
 
-#path of the folder containing the md5sums provided by the facility
-md5_core <- commandArgs(trailingOnly = TRUE) [2]
+# Variables for md5sums from cluster and core facility
+md5_cluster <- args[1]
+md5_core <- args[2]
 
 #output file name containing the links of failed fq files (incorrect and missing).
 out_file <- "failmd5.txt"
 
-##################################
+# Check Arguments
+if (!file.exist(md5_cluster)) {
+  stop(paste(md5_cluster, "directory was not found"))
+}
+else if (!file.exist(md5_core)) {
+    stop(paste(md5_core, "directory was not found"))
+}
+else if (!(length(list.files(md5_cluster)>0))) {
+    stop(paste(md5_cluster, "directory is empty"))
+}
+else if (!(length(list.files(md5_core)>0))) {
+    stop(paste(md5_core, "directory is empty"))
+}
 
+##################################
 # FUNCTION TO PREPROCESS MD5SUMS FILE
 
 prep_md5 <- function(md5_dir){
