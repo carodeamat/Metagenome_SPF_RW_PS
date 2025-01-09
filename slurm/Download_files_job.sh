@@ -1,112 +1,62 @@
 #!/bin/bash
-#SBATCH --account=def-mallev
-#SBATCH --job-name=download_files      # Job name
-#SBATCH --output=download_files.log    # Log file for SLURM output
-#SBATCH --time=01:00:00                 # Time limit
-#SBATCH --cpus-per-task=8               # Number of CPUs per task
-#SBATCH --mem=4G                        # Memory per node
-#SBATCH --nodes=1                       # Number of nodes
 
-# Check for number of arguments
-if [ $# -lt 3 ] || [ $# -gt 4 ]; then
-  echo -e "Three arguments are required: \n 1) URL \n 2) user \n 3) Password"
-  echo "The fourth argument (list of fq files urls) is optional."
-  exit 1
+# First argument: URL
+URLpath=$1
 
-else
-  # First argument: URL
-  URLpath=$1
+# Second argument: user
+URLuser=$2
 
-  # Second argument: user
-  URLuser=$2
+# Third argument: password
+URLpw=$3
 
-  # Third argument: password
-  URLpw=$3
-
-  #Fourth argument (optional: for selected files only)
-  fqFILES=$4
+#Fourth argument (optional: for selected files only)
+fqFILES=$4
 
   # If a file with list of fq files is not provided in the 4th argument,
   # then all the files from the URL provided will be downloaded
-  if [ -z "$4" ]; then
-    echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
+if [ -z "$4" ]; then
+  echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
 
-    # getURLs.sh will generate txt files with lists of URLs and make directories
-    # for fq files and md5sums files.
-    # txt files will then be removed after download.
-    getURLs.sh $URLpath $URLuser $URLpw
-
-    # Download md5sums files in parallel and save in md5files/
-    cd md5files/
-    cat md5urls.txt | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
-    wget --auth-no-challenge \
-    --user=URLuser \
-    --password=URLpw \
-    --no-parent \
-    --no-host-directories \
-    --cut-dirs=4 \
-    --continue \
-    {}
-    rm md5urls.txt
-    echo "md5sums files were saved in the md5files/ directory"
-    echo "Number of files in md5files/ directory:"
-    ls -1 | wc -l
-
-    # Download fq files in parallel and save in fqfiles/
-    cd fqfiles/
-    cat fqurls.txt | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
-    wget --auth-no-challenge \
-    --user=URLuser \
-    --password=URLpw \
-    --no-parent \
-    --no-host-directories \
-    --cut-dirs=4 \
-    --continue \
-    {}
-
-    rm fqurls.txt
-    echo "fq files were saved in the fqfiles/ directory"
-    echo "Number of files in fqfiles/ directory:"
-    ls -1 | wc -l
-
-  else
-
-    # If the 4th argument with list of fq files is provided,
-    # Then only those fq files will be downloaded
-    # in the fqfiles/ directory
-    echo "Downloading files provided in '$4'"
-
-    # Create fqfiles directory if it does not exist.
-    if [ ! -d "fqfiles" ]; then
-      mkdir fqfiles/
-    fi
-
-    # change directory to fq files
-    cd fqfiles/
-
-    # Delete fq files provided if they already exist
-    xargs -a $4 -I {} bash -c '[ -f "{}" ] && rm {}'
-    # Make URL paths for each fq file provided
-    cat $4 | \
-    awk -v base_url=$URLpath '{print base_url $0}' > fqurls.txt
-
-    # Download provided fq files from url in parallel
-    cat fqurls.txt | parallel -j $SLURM_CPUS_PER_TASK --joblog download_files.log bash \
-    wget --auth-no-challenge \
-    --user=URLuser \
-    --password=URLpw \
-    --no-parent \
-    --no-host-directories \
-    --cut-dirs=4 \
-    --continue \
-    {}
-
-    rm fqurls.txt
-    echo "Indicated fq files were saved in the fqfiles/ directory"
-    echo "Number of files in fqfiles/ directory:"
-    ls -1 | wc -l
-  fi
-
-cd ../
+else
+  echo "Downloading files provided in '$4'"
 
 fi
+
+# getURLs.sh will generate txt files with lists of URLs and make directories
+# for fq files and md5sums files.
+# txt files will then be removed after download.
+getURLs.sh $URLpath $URLuser $URLpw $fqFILES
+
+# Download md5sums files in parallel and save in md5files/
+cd md5files/
+cat md5urls.txt | parallel -j 8 --joblog results/log/download_md5files.log \
+wget --auth-no-challenge \
+--user=URLuser \
+--password=URLpw \
+--no-parent \
+--no-host-directories \
+--cut-dirs=4 \
+--continue \
+"{}"
+
+rm md5urls.txt
+echo "md5sums files were saved in the md5files/ directory"
+echo "Number of files in md5files/ directory:"
+ls -1 | wc -l
+
+# Download fq files in parallel and save in fqfiles/
+cd fqfiles/
+cat fqurls.txt | parallel -j 8 --joblog results/log/download_fqfiles.log \
+wget --auth-no-challenge \
+--user=URLuser \
+--password=URLpw \
+--no-parent \
+--no-host-directories \
+--cut-dirs=4 \
+--continue \
+"{}"
+
+rm fqurls.txt
+echo "fq files were saved in the fqfiles/ directory"
+echo "Number of files in fqfiles/ directory:"
+ls -1 | wc -l
