@@ -89,28 +89,26 @@ nomatch <- md5_merge$md5.core != md5_merge$md5.cluster & !is.na(md5_merge$md5.cl
 nomatch_num <- sum(nomatch, na.rm = TRUE)
 nomatch_files <-md5_merge$path.core[nomatch]
 
-cat("Number of incorrect files:", nomatch_num, "\n")
-cat("Incorrect files:", nomatch_files, sep ="\n")
-
-
 #Identify the missing md5 (fq files that did not download)
 missmd5 <- is.na(md5_merge$md5.cluster)
 missmd5_num <- sum(missmd5)
 missmd5_files <- md5_merge$path.core[missmd5]
 
-cat("Number of missing files:", missmd5_num, "\n")
-cat("Missing files:", missmd5_files, sep ="\n")
 
-
-#All failed files 
+#All failed files
 allfailed <- c(nomatch_files, missmd5_files)
-#file names are saved in a txt file
 
+# If there are failed files, save the names in a txt file.
+# If not, then
 if (length(allfailed)>0){
   for (i in allfailed){
     cat(i, sep = "\n", file = out_file, append = TRUE)
   }
-  cat("The name of failed fq files were saved in", out_file, "\n")
+  cat("Number of incorrect files:", nomatch_num, "\n")
+  cat("Incorrect files:", nomatch_files, sep ="\n")
+  cat("Number of missing files:", missmd5_num, "\n")
+  cat("Missing files:", missmd5_files, sep ="\n")
+  cat("The name of failed fq file names were saved in", out_file, "\n")
 }
 else {
   cat("All files passed md5sums check")
