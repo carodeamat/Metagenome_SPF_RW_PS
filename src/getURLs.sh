@@ -29,10 +29,8 @@ else
   fi
 
   # If a file with list of fq files is not provided in the 4th argument,
-  # then all the files from the URL provided will be downloaded
+  # then URL paths will be generated for all the files of the URL provided
   if [ -z "$4" ]; then
-    echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
-
 
     # Get a temporary index html file
     wget --auth-no-challenge \
@@ -62,10 +60,8 @@ else
   elif [ -f "$fqFILES" ] && [[ "$fqFILES" == *.txt ]]; then
 
     # If the 4th argument with list of fq files is provided,
-    # Then only those fq files and respective md5sums will be downloaded
-    # in the respective directories
-    echo "Downloading files provided in '$4'"
-
+    # Then only URLs for those fq files and respective md5sums will be
+    # generated in the respective directories
 
     # Delete fq files provided if they already exist
     xargs -a $4 -I {} bash -c '[ -f "{}" ] && rm {}'
