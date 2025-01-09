@@ -101,13 +101,17 @@ missmd5_files <- md5_merge$path.core[missmd5]
 cat("Number of missing files:", missmd5_num, "\n")
 cat("Missing files:", missmd5_files, sep ="\n")
 
+
+#All failed files 
+allfailed <- c(nomatch_files, missmd5_files)
 #file names are saved in a txt file
-for (i in nomatch_files){
-  cat(i, sep = "\n", file = out_file, append = TRUE)
-}
 
-for (i in missmd5_files){
-  cat(i, sep = "\n", file = out_file, append = TRUE)
+if (length(allfailed)>0){
+  for (i in allfailed){
+    cat(i, sep = "\n", file = out_file, append = TRUE)
+  }
+  cat("The name of failed fq files were saved in", out_file, "\n")
 }
-
-cat("The name of failed fq files were saved in", out_file, "\n")
+else {
+  cat("All files passed md5sums check")
+}
