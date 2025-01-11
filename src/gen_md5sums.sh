@@ -14,3 +14,5 @@ fi
 
 # Run the md5sum command and save the output to the corresponding file
 md5sum "$input_file" > gen_md5sums/"$output_file"
+
+echo "md5sums generated for '$input_file'"
