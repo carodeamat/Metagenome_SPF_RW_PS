@@ -28,5 +28,5 @@ elif [ -f "$FQ_FILES" ] && [[ "$FQ_FILES" == *.txt ]]; then
 
 # If it's neither
 else
-  echo "'$FQ_FILES' should be a directory nor a text file."
+  echo "'$FQ_FILES' should be a directory or a text file with a list of existing fq files."
 fi
