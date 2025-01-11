@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ $# -ne 4 ]; then
+  echo -e "Error: Four arguments are required:\n1)URL\n2)user\n3)Password\n4)txt file with the list of fqfiles or 'all'"
+  exit 1
+fi
+
 # First argument: URL
 URLpath=$1
 
@@ -12,13 +17,23 @@ URLpw=$3
 #Fourth argument (optional: for selected files only)
 fqFILES=$4
 
-  # If a file with list of fq files is not provided in the 4th argument,
-  # then all the files from the URL provided will be downloaded
-if [ -z "$4" ]; then
+# If the 4th argument is all,
+# then all the files from the URL provided will be downloaded
+if [ "$fqFILES" = "all" ]; then
   echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
 
+# If the 4th argument is a txt file with a list of fq files,
+# then only those files will be downloaded
+elif [ -f "$fqFILES" ] && [[ "$fqFILES" == *.txt ]]; then
+
+  # Delete fq files provided if they already exist
+  xargs -a $4 -I {} bash -c '[ -f "{}" ] && rm {}'
+  echo "Deleting pre-existing files"
+  echo "Downloading files provided in '$fqFILES'"
+
+# If the fourth argument is not a txt.file
 else
-  echo "Downloading files provided in '$4'"
+  echo "'$fqFILES' should be either 'all' or a text file with a list of fq files."
 
 fi
 
