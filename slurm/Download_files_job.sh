@@ -79,3 +79,5 @@ rm fqurls.txt
 echo "fq files were saved in the fqfiles/ directory"
 echo "Number of files in fqfiles/ directory:"
 ls -1 | wc -l
+
+cd ../..
