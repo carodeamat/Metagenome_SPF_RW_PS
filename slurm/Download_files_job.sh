@@ -27,14 +27,18 @@ if [ "$fqFILES" = "all" ]; then
 elif [ -f "$fqFILES" ] && [[ "$fqFILES" == *.txt ]]; then
 
   # Delete fq files provided if they already exist
-  xargs -a $4 -I {} bash -c '[ -f "{}" ] && rm {}'
+  xargs -a $fqFILES -I {} bash -c '[ -f "{}" ] && rm {}'
   echo "Deleting pre-existing files"
   echo "Downloading files provided in '$fqFILES'"
 
 # If the fourth argument is not a txt.file
 else
   echo "'$fqFILES' should be either 'all' or a text file with a list of fq files."
+  exit 1
+fi
 
+if [ ! -d "data" ]; then
+  mkdir data/
 fi
 
 # getURLs.sh will generate txt files with lists of URLs and make directories
@@ -43,8 +47,8 @@ fi
 getURLs.sh $URLpath $URLuser $URLpw $fqFILES
 
 # Download md5sums files in parallel and save in md5files/
-cd md5files/
-cat md5urls.txt | parallel -j 8 --joblog results/log/download_md5files.log \
+cd data/md5files/
+cat md5urls.txt | parallel -j 8 --joblog download_md5files.log \
 wget --auth-no-challenge \
 --user=URLuser \
 --password=URLpw \
@@ -60,8 +64,8 @@ echo "Number of files in md5files/ directory:"
 ls -1 | wc -l
 
 # Download fq files in parallel and save in fqfiles/
-cd fqfiles/
-cat fqurls.txt | parallel -j 8 --joblog results/log/download_fqfiles.log \
+cd ../fqfiles/
+cat fqurls.txt | parallel -j 8 --joblog download_fqfiles.log \
 wget --auth-no-challenge \
 --user=URLuser \
 --password=URLpw \
