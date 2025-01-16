@@ -17,6 +17,9 @@ fqFILES=$4
 
 
 # Create directories if they do not exist.
+if [ ! -d "data" ]; then
+  mkdir data/
+fi
 cd data
 if [ ! -d "fqfiles" ]; then
   mkdir fqfiles/
