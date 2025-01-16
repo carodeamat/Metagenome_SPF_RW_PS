@@ -61,10 +61,10 @@ else
 
   # Make URL paths for each file provided
   cat $fqFILES | \
-  awk -v base_url=$URLpath '{print base_url "/" $0}' > fqfiles/fqurls.txt
+  awk -v base_url=$URLpath '{print base_url "/" $0}' > data/fqfiles/fqurls.txt
 
   # Make URL paths for md5sums of each file provided
   cat $fqFILES | \
-  awk -v base_url=$URLpath '{print base_url "/" $0 ".md5sums"}' > md5files/md5urls.txt
+  awk -v base_url=$URLpath '{print base_url "/" $0 ".md5sums"}' > data/md5files/md5urls.txt
 
 fi
