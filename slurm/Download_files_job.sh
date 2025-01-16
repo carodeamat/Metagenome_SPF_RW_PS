@@ -37,14 +37,11 @@ else
   exit 1
 fi
 
-if [ ! -d "data" ]; then
-  mkdir data/
-fi
 
 # getURLs.sh will generate txt files with lists of URLs and make directories
 # for fq files and md5sums files.
 # txt files will then be removed after download.
-getURLs.sh $URLpath $URLuser $URLpw $fqFILES
+src/getURLs.sh $URLpath $URLuser $URLpw $fqFILES
 
 # Download md5sums files in parallel and save in md5files/
 cd data/md5files/
