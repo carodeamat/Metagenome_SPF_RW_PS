@@ -15,7 +15,9 @@ URLpw=$3
 #Fourth argument (optional: for selected files only)
 fqFILES=$4
 
+
 # Create directories if they do not exist.
+cd data
 if [ ! -d "fqfiles" ]; then
   mkdir fqfiles/
 fi
@@ -23,7 +25,7 @@ fi
 if [ ! -d "md5files" ]; then
   mkdir md5files/
 fi
-
+cd ../
 # If the 4th argument is "all",
 # then URL paths will be generated for all the files of the URL provided
 if [ "$fqFILES" = "all" ]; then
@@ -41,7 +43,7 @@ if [ "$fqFILES" = "all" ]; then
   # Transfer all the file urls to a txt file.
   grep -oE 'href="[^"]+\.fq\.gz"' urls.html | \
   sed -E 's/href="([^"]+)"/\1/' | \
-  awk -v base_url=$URLpath '{print base_url $0}' > data/fqfiles/fqurls.txt
+  awk -v base_url=$URLpath '{print base_url "/" $0}' > data/fqfiles/fqurls.txt
 
   # First identify the .fq.gz.md5sums files in index
   # Then add the base url to each file.
