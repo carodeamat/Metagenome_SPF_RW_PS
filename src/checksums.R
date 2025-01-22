@@ -32,6 +32,9 @@ if (!file.exists(md5_cluster)) {
   cat("From core facility in directory:", md5_core, "\n")
 }
 
+cat("---------------------------", "\n")
+cat("\n")
+
 ##################################
 # FUNCTION TO PREPROCESS MD5SUMS FILE
 
@@ -107,6 +110,7 @@ if (length(allfailed)>0){
   }
   cat("Number of incorrect files:", nomatch_num, "\n")
   cat("Incorrect files:", nomatch_files, sep ="\n")
+  cat("---------------------------", "\n")
   cat("Number of missing files:", missmd5_num, "\n")
   cat("Missing files:", missmd5_files, sep ="\n")
   cat("The name of failed fq file names were saved in", out_file, "\n")
