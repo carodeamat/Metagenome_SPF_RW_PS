@@ -15,7 +15,7 @@ md5_cluster <- args[1]
 md5_core <- args[2]
 
 #output file name containing the links of failed fq files (incorrect and missing).
-out_file <- "failmd5.txt"
+out_file <- "data/failmd5.txt"
 
 # Check Arguments
 if (!file.exists(md5_cluster)) {
