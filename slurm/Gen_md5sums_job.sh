@@ -8,7 +8,18 @@
 #SBATCH --nodes=1                       # Number of nodes
 
 # Define argument
-FQ_FILES="$1"
+FQ_FILES=$1
+
+# Create results log directory if they do not exist.
+if [ ! -d "results" ]; then
+  mkdir results/
+fi
+cd results
+
+if [ ! -d "log" ]; then
+  mkdir log/
+fi
+cd ../
 
 # Run the md5sum calculation in parallel on all fastq files
 
@@ -16,14 +27,14 @@ FQ_FILES="$1"
 if [ -d "$FQ_FILES" ]; then
   find $FQ_FILES -name "*.fq.gz" | \
   parallel -j $SLURM_TASKS_PER_NODE \
-  --joblog ../log/gen_md5sums_log.log \
+  --joblog results/log/gen_md5sums_log.log \
   bash src/gen_md5sums.sh {}
 
 # Check if the argument is a text file (.txt extension)
 elif [ -f "$FQ_FILES" ] && [[ "$FQ_FILES" == *.txt ]]; then
   cat $FQ_FILES | \
   parallel -j $SLURM_TASKS_PER_NODE \
-  --joblog ../log/gen_md5sums_log.log \
+  --joblog results/log/gen_md5sums_log.log \
   bash src/gen_md5sums.sh {}
 
 # If it's neither
