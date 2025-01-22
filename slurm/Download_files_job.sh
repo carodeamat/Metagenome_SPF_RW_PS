@@ -26,9 +26,10 @@ if [ "$fqFILES" = "all" ]; then
 # then only those files will be downloaded
 elif [ -f "$fqFILES" ] && [[ "$fqFILES" == *.txt ]]; then
 
-  # Delete fq files provided if they already exist
-  xargs -a $fqFILES -I {} bash -c '[ -f "{}" ] && rm {}'
-  echo "Deleting pre-existing files"
+  # Delete fq and md5sums files if they already exist
+  xargs -a $fqFILES -I {} bash -c '[ -f "data/fqfiles/{}" ] && rm data/fqfiles/{}' 
+  xargs -a $fqFILES -I {} bash -c '[ -f "data/md5files/{}.md5sums" ] && rm data/md5files/{}.md5sums'
+  echo "Deleting pre-existing files if any"
   echo "Downloading files provided in '$fqFILES'"
 
 # If the fourth argument is not a txt.file
