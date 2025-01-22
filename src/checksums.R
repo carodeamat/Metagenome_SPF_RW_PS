@@ -18,17 +18,18 @@ md5_core <- args[2]
 out_file <- "failmd5.txt"
 
 # Check Arguments
-if (!file.exist(md5_cluster)) {
+if (!file.exists(md5_cluster)) {
   stop(paste(md5_cluster, "directory was not found"))
-}
-else if (!file.exist(md5_core)) {
+} else if (!file.exists(md5_core)) {
     stop(paste(md5_core, "directory was not found"))
-}
-else if (!(length(list.files(md5_cluster)>0))) {
+} else if (!(length(list.files(md5_cluster)>0))) {
     stop(paste(md5_cluster, "directory is empty"))
-}
-else if (!(length(list.files(md5_core)>0))) {
+} else if (!(length(list.files(md5_core)>0))) {
     stop(paste(md5_core, "directory is empty"))
+} else {
+  cat("comparing md5sums", "\n")
+  cat("From cluster in directory:", md5_cluster, "\n")
+  cat("From core facility in directory:", md5_core, "\n")
 }
 
 ##################################
@@ -109,7 +110,6 @@ if (length(allfailed)>0){
   cat("Number of missing files:", missmd5_num, "\n")
   cat("Missing files:", missmd5_files, sep ="\n")
   cat("The name of failed fq file names were saved in", out_file, "\n")
-}
-else {
+} else {
   cat("All files passed md5sums check")
 }
