@@ -3,18 +3,18 @@
 # Script to generate md5sums from a file provided as argument.
 
 # Get the input file from argument
-input_file="$1"
+IN_FILE="$1"
 
 # Generate the output file name, ending in md5sums.txt
-output_file=$(basename -- ${input_file%.fq.gz}.md5sums)
+OUT_FILE=$(basename -- ${IN_FILE%.fq.gz}.md5sums)
 
 cd data
-if [ ! -d "gen_md5sums" ]; then
-  mkdir gen_md5sums/
+if [ ! -d "md5sums_cluster" ]; then
+  mkdir md5sums_cluster/
 fi
 cd ../
 
 # Run the md5sum command and save the output to the corresponding file
-md5sum "$input_file" > data/gen_md5sums/"$output_file"
+md5sum $IN_FILE > data/md5sums_cluster/$OUT_FILE
 
-echo "md5sums generated for '$input_file'"
+echo "md5sums generated for '$IN_FILE'"
