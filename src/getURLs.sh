@@ -12,7 +12,7 @@ URLuser=$2
 # Third argument: password
 URLpw=$3
 
-#Fourth argument (optional: for selected files only)
+#Fourth argument: all or a txt file listing the fq file names to be downloaded.
 fqFILES=$4
 
 
@@ -21,12 +21,13 @@ if [ ! -d "data" ]; then
   mkdir data/
 fi
 cd data
+
 if [ ! -d "fqfiles" ]; then
   mkdir fqfiles/
 fi
 
-if [ ! -d "md5files" ]; then
-  mkdir md5files/
+if [ ! -d "md5sums_core" ]; then
+  mkdir md5sums_core/
 fi
 cd ../
 # If the 4th argument is "all",
@@ -53,7 +54,7 @@ if [ "$fqFILES" = "all" ]; then
   # Transfer all the file urls to a txt file.
   grep -oE 'href="[^"]+\.fq\.gz\.md5sums"' urls.html | \
   sed -E 's/href="([^"]+)"/\1/' | \
-  awk -v base_url=$URLpath '{print base_url "/" $0}' > data/md5files/md5urls.txt
+  awk -v base_url=$URLpath '{print base_url "/" $0}' > data/md5sums_core/md5urls.txt
 
   # Remove the html index file
   rm urls.html
@@ -70,6 +71,6 @@ else
 
   # Make URL paths for md5sums of each file provided
   cat $fqFILES | \
-  awk -v base_url=$URLpath '{print base_url "/" $0 ".md5sums"}' > data/md5files/md5urls.txt
+  awk -v base_url=$URLpath '{print base_url "/" $0 ".md5sums"}' > data/md5sums_core/md5urls.txt
 
 fi
