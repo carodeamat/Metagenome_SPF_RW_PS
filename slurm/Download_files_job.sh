@@ -6,30 +6,31 @@ if [ $# -ne 4 ]; then
 fi
 
 # First argument: URL
-URLpath=$1
+URLpath="$1"
 
 # Second argument: user
-URLuser=$2
+URLuser="$2"
 
 # Third argument: password
-URLpw=$3
+URLpw="$3"
 
-#Fourth argument (optional: for selected files only)
-fqFILES=$4
+#Fourth argument: all or a txt file listing the fq file names to be downloaded.
+fqFILES="$4"
 
 # If the 4th argument is all,
 # then all the files from the URL provided will be downloaded
-if [ "$fqFILES" = "all" ]; then
+if [ $fqFILES = "all" ]; then
   echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
 
 # If the 4th argument is a txt file with a list of fq files,
 # then only those files will be downloaded
-elif [ -f "$fqFILES" ] && [[ "$fqFILES" == *.txt ]]; then
+elif [ -f $fqFILES ] && [[ $fqFILES == *.txt ]]; then
 
   # Delete fq and md5sums files if they already exist
-  xargs -a $fqFILES -I {} bash -c '[ -f "data/fqfiles/{}" ] && rm data/fqfiles/{}' 
-  xargs -a $fqFILES -I {} bash -c '[ -f "data/md5files/{}.md5sums" ] && rm data/md5files/{}.md5sums'
   echo "Deleting pre-existing files if any"
+  xargs -a $fqFILES -I {} bash -c '[ -f "data/fqfiles/{}" ] && rm data/fqfiles/{}'
+  xargs -a $fqFILES -I {} bash -c '[ -f "data/md5sums_core/{}.md5sums" ] && rm data/md5sums_core/{}.md5sums'
+
   echo "Downloading files provided in '$fqFILES'"
 
 # If the fourth argument is not a txt.file
@@ -45,7 +46,7 @@ fi
 src/getURLs.sh $URLpath $URLuser $URLpw $fqFILES
 
 # Download md5sums files in parallel and save in md5files/
-cd data/md5files/
+cd data/md5sums_core/
 cat md5urls.txt | parallel -j 8 --joblog download_md5files.log \
 wget --auth-no-challenge \
 --user=URLuser \
@@ -57,8 +58,8 @@ wget --auth-no-challenge \
 "{}"
 
 rm md5urls.txt
-echo "md5sums files were saved in the md5files/ directory"
-echo "Number of files in md5files/ directory:"
+echo "md5sums files were saved in the md5sums_core/ directory"
+echo "Number of files in md5sums_core/ directory:"
 ls -1 | wc -l
 
 # Download fq files in parallel and save in fqfiles/
