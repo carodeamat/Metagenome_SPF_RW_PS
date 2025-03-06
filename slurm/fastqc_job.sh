@@ -1,14 +1,15 @@
 #!/bin/bash
 #SBATCH --account=def-mallev
 #SBATCH --job-name=fastqc_job
-#SBATCH --output=%x_%j.out
-#SBATCH --time=24:00:00
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=8192M
+#SBATCH --output=data/%x_%j.out
+#SBATCH --time=5:00:00
+#SBATCH --ntasks=32
+#SBATCH --mem=12G
 #SBATCH --nodes=1
 
-IN_DIR="$1"
-OUT_DIR="results"
+IN_DIR="data/fqfiles"
+OUT_DIR="analysis"
+LANE=$1
 
 if [ ! -d $OUT_DIR ]; then
   mkdir $OUT_DIR/
@@ -20,10 +21,11 @@ fi
 if [ ! -d "log" ]; then
   mkdir log/
 fi
-cd "$(pwd | sed "s|/$OUT_DIR||")"
+cd ..
 
 module load CCEnv
 module load StdEnv/2023
 module load fastqc
 
-ls $IN_DIR/*.fq | parallel -j $SLURM_CPUS_PER_TASK --joblog $OUT_DIR/log/fastqc.log fastqc -o $OUT_DIR/QC {}
+ls $IN_DIR/*.fq | parallel -j $SLURM_NTASKS --joblog $OUT_DIR/log/fastqc.log fastqc -o $OUT_DIR/QC {}
+ls $IN_DIR/*.fq | fastqc -o $OUT_DIR/QC -t $SLURM_NTASKS {}
