@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=def-mallev
 #SBATCH --job-name=Multiqc_job
-#SBATCH --output=%x_%j.out
-#SBATCH --time=04:00:00
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=4096M
+#SBATCH --output=data/%x_%j.out
+#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=4G
 #SBATCH --nodes=1
 
 module load CCEnv
@@ -19,14 +19,14 @@ pip install --no-index multiqc
 
 module load multiqc
 
-IN_DIR="$1"
-OUT_DIR="results"
+IN_DIR="analysis/QC"
+OUT_DIR="analysis"
 
 cd $OUT_DIR
 if [ ! -d "MultiQC" ]; then
   mkdir MultiQC/
 fi
-cd "$(pwd | sed "s|/$OUT_DIR||")"
+cd ..
 
 multiqc $IN_DIR -o $OUT_DIR/MultiQC
 
