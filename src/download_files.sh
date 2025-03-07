@@ -6,20 +6,20 @@ if [ $# -ne 4 ]; then
 fi
 
 # First argument: URL
-URLpath="$1"
+URLpath=$1
 
 # Second argument: user
-URLuser="$2"
+URLuser=$2
 
 # Third argument: password
-URLpw="$3"
+URLpw=$3
 
 #Fourth argument: all or a txt file listing the fq file names to be downloaded.
-fqFILES="$4"
+fqFILES=$4
 
 # If the 4th argument is all,
 # then all the files from the URL provided will be downloaded
-if [ $fqFILES = "all" ]; then
+if [ $fqFILES = all ]; then
   echo "downloading all .fq.gz and .fq.gz.md5sums files from url"
 
 # If the 4th argument is a txt file with a list of fq files,
@@ -43,14 +43,14 @@ fi
 # getURLs.sh will generate txt files with lists of URLs and make directories
 # for fq files and md5sums files.
 # txt files will then be removed after download.
-src/getURLs.sh $URLpath $URLuser $URLpw $fqFILES
+bash src/getURLs.sh $URLpath $URLuser $URLpw $fqFILES
 
 # Download md5sums files in parallel and save in md5files/
 cd data/md5sums_core/
 cat md5urls.txt | parallel -j 8 --joblog download_md5files.log \
 wget --auth-no-challenge \
---user=URLuser \
---password=URLpw \
+--user=$URLuser \
+--password=$URLpw \
 --no-parent \
 --no-host-directories \
 --cut-dirs=4 \
@@ -66,8 +66,8 @@ ls -1 | wc -l
 cd ../fqfiles/
 cat fqurls.txt | parallel -j 8 --joblog download_fqfiles.log \
 wget --auth-no-challenge \
---user=URLuser \
---password=URLpw \
+--user=$URLuser \
+--password=$URLpw \
 --no-parent \
 --no-host-directories \
 --cut-dirs=4 \
