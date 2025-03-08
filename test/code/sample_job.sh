@@ -2,7 +2,7 @@
 #SBATCH --account=def-mallev
 #SBATCH --job-name=fqsample
 #SBATCH --output=test/%x_%j.out
-#SBATCH --time=01:00:00
+#SBATCH --time=00:15:00
 #SBATCH --ntasks=32
 #SBATCH --nodes=1
 
