@@ -6,7 +6,7 @@
 #SBATCH --ntasks=8
 #SBATCH --nodes=1
 
-IN_DIR=data/fqfiles
+IN_DIR=data/Trimmed
 OUT_DIR=data
 REF_GENOME=/scratch/m/mallev/caro/Metagenome_SPF_RW_PS/RefGenomes/Mus_musculus/UCSC/mm10/Sequence/Bowtie2Index/
 LANE=$1
@@ -26,6 +26,6 @@ export BOWTIE2_INDEXES=$REF_GENOME
 cat $OUT_DIR/SampleIDs/sample_ids_"$LANE".txt | \
 parallel -j $SLURM_NTASKS \
 bowtie2 -x genome \
-    -1 $IN_DIR/*_"$LANE"_{}_1.fq.gz \
-    -2 $IN_DIR/*_"$LANE"_{}_2.fq.gz \
+    -1 $IN_DIR/Trim_p_"$LANE"_{}_1.fq.gz \
+    -2 $IN_DIR/Trim_p_"$LANE"_{}_2.fq.gz \
     -S $OUT_DIR/MapRef/MapRef_"$LANE"_{}.sam
